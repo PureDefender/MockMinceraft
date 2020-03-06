@@ -11,12 +11,16 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import static org.lwjgl.opengl.GL11.*;
+import org.lwjgl.util.glu.GLU;
 
 /**
  *
  * @author SydHo, Luke Doukakis
  */
 public class FakeMinceraft {
+    
+    
+    DisplayMode displayMode;
 
     public static void main(String[] args) {
         FakeMinceraft main = new FakeMinceraft();
@@ -40,17 +44,28 @@ public class FakeMinceraft {
     }
 
     void createWindow() throws Exception {
-        Display.setFullscreen(false);
-        Display.setDisplayMode(new DisplayMode(640, 480));
+
+        DisplayMode d[] =
+        Display.getAvailableDisplayModes();
+        for (int i = 0; i < d.length; i++) {
+            if (d[i].getWidth() == 640 && d[i].getHeight() == 480 && d[i].getBitsPerPixel() == 32) {
+                displayMode = d[i];
+                break;
+            }
+        }
+        Display.setDisplayMode(displayMode);
         Display.setTitle("Fake Minecraft");
         Display.create();
+        
+        
     }
 
     void initGL() {
         glClearColor(.0f, .0f, .0f, .0f);
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        glOrtho(-320, 320, -240, 240, 1, -1);   // origin centered on window
+        GLU.gluPerspective(100.0f, (float)displayMode.getWidth()/(float)
+        displayMode.getHeight(), 0.1f, 300.0f);
         glMatrixMode(GL_MODELVIEW);
         glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
     }
@@ -75,6 +90,8 @@ public class FakeMinceraft {
 
             time = Sys.getTime();
             lastTime = time;
+            
+       
 
             // *************************
             // Apply orientation (pitch and yaw):
@@ -87,14 +104,16 @@ public class FakeMinceraft {
             checkInput(camera, movementSpeed);
 
             // Show scene:
-            glLoadIdentity();
-            camera.lookThrough();
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glLoadIdentity();
+            camera.lookThrough();  
 
             // call method to draw the box
             drawScene();
             Display.update();
             Display.sync(60);
+            
+          
 
             // *************************
         }
@@ -123,6 +142,7 @@ public class FakeMinceraft {
     }
 
     private void drawScene() {
+        
 
         glBegin(GL_QUADS);
         //Top
@@ -132,26 +152,31 @@ public class FakeMinceraft {
         glVertex3f(-20.0f, 20.0f, 20.0f);
         glVertex3f(20.0f, 20.0f, 20.0f);
         //Bottom
+        glColor3f(20.0f, 0.0f, 20.0f);
         glVertex3f(20.0f, -20.0f, 20.0f);
         glVertex3f(-20.0f, -20.0f, 20.0f);
         glVertex3f(-20.0f, -20.0f, -20.0f);
         glVertex3f(20.0f, -20.0f, -20.0f);
         //Front
+        glColor3f(0.0f, 20.0f, 20.0f);
         glVertex3f(20.0f, 20.0f, 20.0f);
         glVertex3f(-20.0f, 20.0f, 20.0f);
         glVertex3f(-20.0f, -20.0f, 20.0f);
         glVertex3f(20.0f, -20.0f, 20.0f);
         //Back
+        glColor3f(0.0f, 20.0f, 0.0f);
         glVertex3f(20.0f, -20.0f, -20.0f);
         glVertex3f(-20.0f, -20.0f, -20.0f);
         glVertex3f(-20.0f, 20.0f, -20.0f);
         glVertex3f(20.0f, 20.0f, -20.0f);
         //Left
+        glColor3f(20.0f, 0.0f, 20.0f);
         glVertex3f(-20.0f, 20.0f, 20.0f);
         glVertex3f(-20.0f, 20.0f, -20.0f);
         glVertex3f(-20.0f, -20.0f, -20.0f);
         glVertex3f(-20.0f, -20.0f, 20.0f);
         //Right
+        glColor3f(20.0f, 20.0f, 20.0f);
         glVertex3f(20.0f, 20.0f, -20.0f);
         glVertex3f(20.0f, 20.0f, 20.0f);
         glVertex3f(20.0f, -20.0f, 20.0f);
