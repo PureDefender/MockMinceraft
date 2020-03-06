@@ -83,16 +83,16 @@ public class FakeMinceraft {
 
             // pitch based on mouse y movement
             camera.changePitch(Mouse.getDY() * mouseSensitivity);
-            
+
             checkInput(camera, movementSpeed);
-            
+
             // Show scene:
             glLoadIdentity();
             camera.lookThrough();
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             // call method to draw the box
-            //drawScene();
+            drawScene();
             Display.update();
             Display.sync(60);
 
@@ -120,6 +120,89 @@ public class FakeMinceraft {
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
             camera.moveDown(movementSpeed);
         }
+    }
+
+    private void drawScene() {
+
+        glBegin(GL_QUADS);
+        //Top
+        glColor3f(0.0f, 0.0f, 20.0f);
+        glVertex3f(20.0f, 20.0f, -20.0f);
+        glVertex3f(-20.0f, 20.0f, -20.0f);
+        glVertex3f(-20.0f, 20.0f, 20.0f);
+        glVertex3f(20.0f, 20.0f, 20.0f);
+        //Bottom
+        glVertex3f(20.0f, -20.0f, 20.0f);
+        glVertex3f(-20.0f, -20.0f, 20.0f);
+        glVertex3f(-20.0f, -20.0f, -20.0f);
+        glVertex3f(20.0f, -20.0f, -20.0f);
+        //Front
+        glVertex3f(20.0f, 20.0f, 20.0f);
+        glVertex3f(-20.0f, 20.0f, 20.0f);
+        glVertex3f(-20.0f, -20.0f, 20.0f);
+        glVertex3f(20.0f, -20.0f, 20.0f);
+        //Back
+        glVertex3f(20.0f, -20.0f, -20.0f);
+        glVertex3f(-20.0f, -20.0f, -20.0f);
+        glVertex3f(-20.0f, 20.0f, -20.0f);
+        glVertex3f(20.0f, 20.0f, -20.0f);
+        //Left
+        glVertex3f(-20.0f, 20.0f, 20.0f);
+        glVertex3f(-20.0f, 20.0f, -20.0f);
+        glVertex3f(-20.0f, -20.0f, -20.0f);
+        glVertex3f(-20.0f, -20.0f, 20.0f);
+        //Right
+        glVertex3f(20.0f, 20.0f, -20.0f);
+        glVertex3f(20.0f, 20.0f, 20.0f);
+        glVertex3f(20.0f, -20.0f, 20.0f);
+        glVertex3f(20.0f, -20.0f, -20.0f);
+        glEnd();
+
+        /*
+         glBegin(GL_LINE_LOOP);
+         //Top
+         glColor3f(0.0f, 0.0f, 0.0f);
+         glVertex3f(20.0f, 20.0f, -20.0f);
+         glVertex3f(-20.0f, 20.0f, -20.0f);
+         glVertex3f(-20.0f, 20.0f, 20.0f);
+         glVertex3f(20.0f, 20.0f, 20.0f);
+         glEnd();
+         glBegin(GL_LINE_LOOP);
+         //Bottom
+         glVertex3f(20.0f, -20.0f, 20.0f);
+         glVertex3f(-20.0f, -20.0f, 20.0f);
+         glVertex3f(-20.0f, -20.0f, -20.0f);
+         glVertex3f(20.0f, -20.0f, -20.0f);
+         glEnd();
+         glBegin(GL_LINE_LOOP);
+         //Front
+         glVertex3f(20.0f, 20.0f, 20.0f);
+         glVertex3f(-20.0f, 20.0f, 20.0f);
+         glVertex3f(-20.0f, -20.0f, 20.0f);
+         glVertex3f(20.0f, -20.0f, 20.0f);
+         glEnd();
+         glBegin(GL_LINE_LOOP);
+         //Back
+         glVertex3f(20.0f, -20.0f, -20.0f);
+         glVertex3f(-20.0f, -20.0f, -20.0f);
+         glVertex3f(-20.0f, 20.0f, -20.0f);
+         glVertex3f(20.0f, 20.0f, -20.0f);
+         glEnd();
+         glBegin(GL_LINE_LOOP);
+         //Left
+         glVertex3f(-20.0f, 20.0f, 20.0f);
+         glVertex3f(-20.0f, 20.0f, -20.0f);
+         glVertex3f(-20.0f, -20.0f, -20.0f);
+         glVertex3f(-20.0f, -20.0f, 20.0f);
+         glEnd();
+         glBegin(GL_LINE_LOOP);
+         //Right
+         glVertex3f(20.0f, 20.0f, -20.0f);
+         glVertex3f(20.0f, 20.0f, 20.0f);
+         glVertex3f(20.0f, -20.0f, 20.0f);
+         glVertex3f(20.0f, -20.0f, -20.0f);
+         glEnd();
+         */
     }
 
 }
