@@ -5,87 +5,133 @@
  */
 package fakeminceraft;
 
-/**
- *
- * @author SydHo
- */
-import java.nio.FloatBuffer;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.LWJGLException;
+
+import org.lwjgl.Sys;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import static org.lwjgl.opengl.GL11.*;
-import org.lwjgl.util.glu.GLU;
 
+/**
+ *
+ * @author SydHo, Luke Doukakis
+ */
 public class FakeMinceraft {
 
-    /**
-     * @param args the command line arguments
-     */
+    
     public static void main(String[] args) {
-        // TODO code application logic here
+        FakeMinceraft main = new FakeMinceraft();
+        main.start();
     }
-
-    /**
-     * Calls the appropriate functions to begin the program
-     */
-    public void start() {
+    
+    
+    // create window, initlialize settings, and repeatedly render
+    public void start(){
+        
         try {
+            
             createWindow();
             initGL();
-            render();
-        } catch (Exception e) {
+            
+            render();    
+            
+            Display.destroy();  
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-    /**
-     * Creates the window to be used in the program
-     *
-     * @throws Exception
-     */
-    private void createWindow() throws Exception {
+    
+    
+    void createWindow() throws Exception {
         Display.setFullscreen(false);
-
         Display.setDisplayMode(new DisplayMode(640, 480));
-        Display.setTitle("Minceraft");
+        Display.setTitle("Fake Minecraft");
         Display.create();
     }
     
-    /**
-     * Initializes the graphics library
-     */
-    private void initGL() {
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-
+ 
+    void initGL(){
+        glClearColor(.0f, .0f, .0f, .0f);
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-
-        glOrtho(0, 640, 0, 480, 1, -1);
+        glOrtho(-320, 320, -240, 240, 1, -1);   // origin centered on window
         glMatrixMode(GL_MODELVIEW);
-        glHint(GL_PERSPECTIVE_CORRECTION_HINT,
-                GL_NICEST);
+        glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
     }
     
-    /**
-     * Render function to start drawing
-     */
-    private void render() {
-        while (!Display.isCloseRequested()) {
-            try {
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-                glLoadIdentity();
-                glPointSize(1);
-                // checkInput();
-                glBegin(GL_POINTS);
-
-                glEnd();
-                Display.update();
-                Display.sync(144);
-            } catch (Exception e) {
+    // @TODO
+    void render(){
+        
+        // camera controller
+        FirstPersonCameraController camera = new FirstPersonCameraController(0,0,0);
+        
+        float dx = 0.0f;
+        float dy = 0.0f;
+        float dt = 0.0f;        //length of frame
+        float lastTime = 0.0f;  // when the last frame was
+        long time = 0;
+        float mouseSensitivity = 0.09f;
+        float movementSpeed = .35f;
+        Mouse.setGrabbed(true);
+        
+        // while loop, to run until user desires to exit
+        while(!Display.isCloseRequested() && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
+            
+            time = Sys.getTime();
+            lastTime = time;
+             
+            // *************************
+            // Apply orientation (pitch and yaw):
+            
+            // yaw based on mouse x movement
+            camera.changeYaw(Mouse.getDX() * mouseSensitivity);
+            
+            // pitch based on mouse y movement
+            camera.changePitch(Mouse.getDY() * mouseSensitivity);
+            
+            // *************************
+            // Apply movement:
+            
+            if (Keyboard.isKeyDown(Keyboard.KEY_W)){
+                camera.moveForward(movementSpeed);
             }
+            if (Keyboard.isKeyDown(Keyboard.KEY_S)){
+                camera.moveBackward(movementSpeed);
+            }
+            if (Keyboard.isKeyDown(Keyboard.KEY_A)){
+                camera.moveLeft(movementSpeed);
+            }
+            if (Keyboard.isKeyDown(Keyboard.KEY_D)){
+                camera.moveRight(movementSpeed);
+            }
+            if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)){
+                camera.moveUp(movementSpeed);
+            }
+            if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+                camera.moveDown(movementSpeed);
+            }
+            
+            // *************************
+            // Show scene:
+            
+            glLoadIdentity();
+            camera.lookThrough();
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            
+            // call method to draw the box
+            //drawScene();
+            
+            Display.update();
+            Display.sync(60);
+            
+            // *************************
+ 
         }
         Display.destroy();
+        
     }
 
 }
+
