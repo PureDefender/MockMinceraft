@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package fakeminceraft;
 
 import org.lwjgl.Sys;
@@ -120,6 +115,11 @@ public class FakeMinceraft {
         Display.destroy();
     }
 
+    /**
+     * Checks user keyboard input
+     * @param camera Camera object to be manipulated (first person)w
+     * @param movementSpeed Movement speed of user
+     */
     private void checkInput(FirstPersonCameraController camera, float movementSpeed) {
         if (Keyboard.isKeyDown(Keyboard.KEY_W) || Keyboard.isKeyDown(Keyboard.KEY_UP)) {
             camera.moveForward(movementSpeed);
@@ -182,52 +182,6 @@ public class FakeMinceraft {
         glVertex3f(20.0f, -20.0f, 20.0f);
         glVertex3f(20.0f, -20.0f, -20.0f);
         glEnd();
-
-        /*
-         glBegin(GL_LINE_LOOP);
-         //Top
-         glColor3f(0.0f, 0.0f, 0.0f);
-         glVertex3f(20.0f, 20.0f, -20.0f);
-         glVertex3f(-20.0f, 20.0f, -20.0f);
-         glVertex3f(-20.0f, 20.0f, 20.0f);
-         glVertex3f(20.0f, 20.0f, 20.0f);
-         glEnd();
-         glBegin(GL_LINE_LOOP);
-         //Bottom
-         glVertex3f(20.0f, -20.0f, 20.0f);
-         glVertex3f(-20.0f, -20.0f, 20.0f);
-         glVertex3f(-20.0f, -20.0f, -20.0f);
-         glVertex3f(20.0f, -20.0f, -20.0f);
-         glEnd();
-         glBegin(GL_LINE_LOOP);
-         //Front
-         glVertex3f(20.0f, 20.0f, 20.0f);
-         glVertex3f(-20.0f, 20.0f, 20.0f);
-         glVertex3f(-20.0f, -20.0f, 20.0f);
-         glVertex3f(20.0f, -20.0f, 20.0f);
-         glEnd();
-         glBegin(GL_LINE_LOOP);
-         //Back
-         glVertex3f(20.0f, -20.0f, -20.0f);
-         glVertex3f(-20.0f, -20.0f, -20.0f);
-         glVertex3f(-20.0f, 20.0f, -20.0f);
-         glVertex3f(20.0f, 20.0f, -20.0f);
-         glEnd();
-         glBegin(GL_LINE_LOOP);
-         //Left
-         glVertex3f(-20.0f, 20.0f, 20.0f);
-         glVertex3f(-20.0f, 20.0f, -20.0f);
-         glVertex3f(-20.0f, -20.0f, -20.0f);
-         glVertex3f(-20.0f, -20.0f, 20.0f);
-         glEnd();
-         glBegin(GL_LINE_LOOP);
-         //Right
-         glVertex3f(20.0f, 20.0f, -20.0f);
-         glVertex3f(20.0f, 20.0f, 20.0f);
-         glVertex3f(20.0f, -20.0f, 20.0f);
-         glVertex3f(20.0f, -20.0f, -20.0f);
-         glEnd();
-         */
     }
 
 }
