@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package fakeminceraft;
 
 import org.lwjgl.Sys;
@@ -16,6 +21,7 @@ public class FakeMinceraft {
     
     
     DisplayMode displayMode;
+    FirstPersonCameraController camera;
 
     public static void main(String[] args) {
         FakeMinceraft main = new FakeMinceraft();
@@ -24,14 +30,11 @@ public class FakeMinceraft {
 
     // create window, initlialize settings, and repeatedly render
     public void start() {
-
         try {
-
             createWindow();
             initGL();
-
-            render();
-
+            camera = new FirstPersonCameraController(0, 0, 0);
+            gameLoop();
             Display.destroy();
         } catch (Exception e) {
             e.printStackTrace();
@@ -39,9 +42,7 @@ public class FakeMinceraft {
     }
 
     void createWindow() throws Exception {
-
-        DisplayMode d[] =
-        Display.getAvailableDisplayModes();
+        DisplayMode d[] = Display.getAvailableDisplayModes();
         for (int i = 0; i < d.length; i++) {
             if (d[i].getWidth() == 640 && d[i].getHeight() == 480 && d[i].getBitsPerPixel() == 32) {
                 displayMode = d[i];
@@ -50,27 +51,24 @@ public class FakeMinceraft {
         }
         Display.setDisplayMode(displayMode);
         Display.setTitle("Fake Minecraft");
-        Display.create();
-        
-        
+        Display.create();  
     }
 
     void initGL() {
         glClearColor(.0f, .0f, .0f, .0f);
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        GLU.gluPerspective(100.0f, (float)displayMode.getWidth()/(float)
-        displayMode.getHeight(), 0.1f, 300.0f);
+        GLU.gluPerspective(100.0f, (float)displayMode.getWidth() / (float)displayMode.getHeight(), 0.1f, 300.0f);
         glMatrixMode(GL_MODELVIEW);
         glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+        // -- allow chunks to be rendered
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_COLOR_ARRAY);
+        glEnable(GL_DEPTH_TEST);
+        // --
     }
-
-    // @TODO
-    void render() {
-
-        // camera controller
-        FirstPersonCameraController camera = new FirstPersonCameraController(0, 0, 0);
-
+    
+    void gameLoop() {
         float dx = 0.0f;
         float dy = 0.0f;
         float dt = 0.0f;        //length of frame
@@ -79,21 +77,14 @@ public class FakeMinceraft {
         float mouseSensitivity = 0.09f;
         float movementSpeed = .35f;
         Mouse.setGrabbed(true);
-
-        // while loop, to run until user desires to exit
+        // repeat run until user desires to exit
         while (!Display.isCloseRequested() && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
-
+            
             time = Sys.getTime();
             lastTime = time;
             
-       
-
-            // *************************
             // Apply orientation (pitch and yaw):
-            // yaw based on mouse x movement
             camera.changeYaw(Mouse.getDX() * mouseSensitivity);
-
-            // pitch based on mouse y movement
             camera.changePitch(Mouse.getDY() * mouseSensitivity);
 
             checkInput(camera, movementSpeed);
@@ -101,25 +92,23 @@ public class FakeMinceraft {
             // Show scene:
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             glLoadIdentity();
-            camera.lookThrough();  
-
-            // call method to draw the box
-            drawScene();
+            camera.lookThrough();
+            
+            
+            // -- call method to draw a box (from checkpoint 1)
+            // drawScene();
+            // --
+            
+            // -- draw chunk
+            camera.chunk.render();
+            // --
+            
             Display.update();
             Display.sync(60);
-            
-          
-
-            // *************************
         }
         Display.destroy();
     }
 
-    /**
-     * Checks user keyboard input
-     * @param camera Camera object to be manipulated (first person)w
-     * @param movementSpeed Movement speed of user
-     */
     private void checkInput(FirstPersonCameraController camera, float movementSpeed) {
         if (Keyboard.isKeyDown(Keyboard.KEY_W) || Keyboard.isKeyDown(Keyboard.KEY_UP)) {
             camera.moveForward(movementSpeed);

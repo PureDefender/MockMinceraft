@@ -15,7 +15,9 @@ public class BlockLoader {
 
     private boolean active;
     private BlockType type;
-
+    
+    public float x, y, z;
+   
     public enum BlockType {
 
         BlockType_Grass(0),
@@ -28,11 +30,12 @@ public class BlockLoader {
         BlockType_Wood(7),
         BlockType_Leaves(8),
         BlockType_Coal(9),
-        BlockType_Lapuz(10),
-        BlockType_RedStone(11),
+        BlockType_Lapiz(10),
+        BlockType_Redstone(11),
         BlockType_IronOre(12),
         BlockType_GoldOre(13),
-        BlockType_DiamondOre(14);
+        BlockType_DiamondOre(14),
+        BlockType_Default(15);
 
         private int blockID;
 
@@ -52,6 +55,15 @@ public class BlockLoader {
     public BlockLoader(BlockType type) {
         this.type = type;
     }
+    
+    void setCoords(float x, float y, float z){
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+    
+    
+    
 
     public boolean active() {
         return active;

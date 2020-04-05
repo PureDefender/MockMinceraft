@@ -1,3 +1,4 @@
+
 package fakeminceraft;
 
 /**
@@ -26,6 +27,8 @@ public class FirstPersonCameraController {
     float pitch = 0.0f;
     
     Vector3Float me;
+    
+    Chunk chunk = new Chunk(30, 0, 30);
     
     // constructor, initializes camera's Vector3f position
     public FirstPersonCameraController(float x, float y, float z){
@@ -93,8 +96,6 @@ public class FirstPersonCameraController {
         position.y += distance;
     }
     
-    
-    
     // establish look vector based on pitch and yaw
     public void lookThrough(){
         
@@ -107,6 +108,9 @@ public class FirstPersonCameraController {
         //translate to the position vector's location
         glTranslatef(position.x, position.y, position.z);
     }
+    
+    
+    
     
     
     
