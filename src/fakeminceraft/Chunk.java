@@ -22,7 +22,7 @@ import org.newdawn.slick.util.ResourceLoader;
 
 public class Chunk {
 
-    static final int CHUNK_SIZE = 30;
+    static final int CHUNK_SIZE = 50;
     static final int CUBE_LENGTH = 2;
     static final float PMIN = 0.04f;
     static final float PMAX = 0.06f;
@@ -31,7 +31,6 @@ public class Chunk {
     private int VBOColorHandle;
     private int VBOTextureHandle;
     private Texture texture;
-    private int StartX, StartY, StartZ;
     private Random r;
 
     public Chunk(int startX, int startY, int startZ) {
@@ -122,11 +121,11 @@ public class Chunk {
 
         renderElements();
 
-        for (float x = 0; x < CHUNK_SIZE; x += 1) {
-            for (float z = 0; z < CHUNK_SIZE; z += 1) {
+        for (float x = 0; x < CHUNK_SIZE; x++) {
+            for (float z = 0; z < CHUNK_SIZE; z++) {
                 for (float y = 0; y < CHUNK_SIZE; y++) {
                     if (BlocksArray[(int) (x)][(int) (y)][(int) (z)].active() && blockExposed((int) x, (int) y, (int) z)) {
-                        VertexPositionData.put(createCube((float) (startX + x * CUBE_LENGTH), (float) (y * CUBE_LENGTH + (int) (CHUNK_SIZE * .8)), (float) (startZ + z * CUBE_LENGTH)));
+                        VertexPositionData.put(createCube((float) (startX + x * CUBE_LENGTH), (float) (y * CUBE_LENGTH + (float) (CHUNK_SIZE * -1.0)), (float) (startZ + z * CUBE_LENGTH) + (float) (CHUNK_SIZE * 1.5)));
                         VertexColorData.put(createCubeVertexCol(getCubeColor(BlocksArray[(int) x][(int) y][(int) z])));
                         VertexTextureData.put(createTexCube((float) 0, (float) 0, BlocksArray[(int) (x)][(int) (y)][(int) (z)]));
                     }
@@ -158,37 +157,30 @@ public class Chunk {
     public static float[] createCube(float x, float y, float z) {
         int offset = CUBE_LENGTH / 2;
         return new float[]{
-            // TOP QUAD
             x + offset, y + offset, z,
             x - offset, y + offset, z,
             x - offset, y + offset, z - CUBE_LENGTH,
             x + offset, y + offset, z - CUBE_LENGTH,
-            // BOTTOM QUAD
             x + offset, y - offset, z - CUBE_LENGTH,
             x - offset, y - offset, z - CUBE_LENGTH,
             x - offset, y - offset, z,
             x + offset, y - offset, z,
-            // FRONT QUAD
             x + offset, y + offset, z - CUBE_LENGTH,
             x - offset, y + offset, z - CUBE_LENGTH,
             x - offset, y - offset, z - CUBE_LENGTH,
             x + offset, y - offset, z - CUBE_LENGTH,
-            // BACK QUAD
             x + offset, y - offset, z,
             x - offset, y - offset, z,
             x - offset, y + offset, z,
             x + offset, y + offset, z,
-            // LEFT QUAD
             x - offset, y + offset, z - CUBE_LENGTH,
             x - offset, y + offset, z,
             x - offset, y - offset, z,
             x - offset, y - offset, z - CUBE_LENGTH,
-            // RIGHT QUAD
             x + offset, y + offset, z,
             x + offset, y + offset, z - CUBE_LENGTH,
             x + offset, y - offset, z - CUBE_LENGTH,
-            x + offset, y - offset, z
-        };
+            x + offset, y - offset, z};
     }
 
     private float[] getCubeColor(BlockLoader block) {

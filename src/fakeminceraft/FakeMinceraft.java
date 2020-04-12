@@ -5,6 +5,8 @@
  */
 package fakeminceraft;
 
+import java.nio.FloatBuffer;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -21,6 +23,8 @@ public class FakeMinceraft {
 
     DisplayMode displayMode;
     FirstPersonCameraController camera;
+    private FloatBuffer lightPosition;
+    private FloatBuffer whiteLight;
 
     public static void main(String[] args) {
         FakeMinceraft main = new FakeMinceraft();
@@ -60,13 +64,20 @@ public class FakeMinceraft {
         GLU.gluPerspective(100.0f, (float) displayMode.getWidth() / (float) displayMode.getHeight(), 0.1f, 300.0f);
         glMatrixMode(GL_MODELVIEW);
         glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-        // -- allow chunks to be rendered
+        
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_COLOR_ARRAY);
         glEnable(GL_TEXTURE_2D);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         glEnable(GL_DEPTH_TEST);
-        // --
+        
+        initLightArrays();
+        glLight(GL_LIGHT0, GL_POSITION, lightPosition); 
+        glLight(GL_LIGHT0, GL_SPECULAR, whiteLight);
+        glLight(GL_LIGHT0, GL_DIFFUSE, whiteLight);
+        glLight(GL_LIGHT0, GL_AMBIENT, whiteLight);
+        glEnable(GL_LIGHTING);
+        glEnable(GL_LIGHT0);
     }
 
     void gameLoop() {
@@ -128,47 +139,13 @@ public class FakeMinceraft {
             camera.moveDown(movementSpeed);
         }
     }
-
-    private void drawScene() {
-
-        glBegin(GL_QUADS);
-        //Top
-        glColor3f(0.0f, 0.0f, 20.0f);
-        glVertex3f(20.0f, 20.0f, -20.0f);
-        glVertex3f(-20.0f, 20.0f, -20.0f);
-        glVertex3f(-20.0f, 20.0f, 20.0f);
-        glVertex3f(20.0f, 20.0f, 20.0f);
-        //Bottom
-        glColor3f(20.0f, 0.0f, 20.0f);
-        glVertex3f(20.0f, -20.0f, 20.0f);
-        glVertex3f(-20.0f, -20.0f, 20.0f);
-        glVertex3f(-20.0f, -20.0f, -20.0f);
-        glVertex3f(20.0f, -20.0f, -20.0f);
-        //Front
-        glColor3f(0.0f, 20.0f, 20.0f);
-        glVertex3f(20.0f, 20.0f, 20.0f);
-        glVertex3f(-20.0f, 20.0f, 20.0f);
-        glVertex3f(-20.0f, -20.0f, 20.0f);
-        glVertex3f(20.0f, -20.0f, 20.0f);
-        //Back
-        glColor3f(0.0f, 20.0f, 0.0f);
-        glVertex3f(20.0f, -20.0f, -20.0f);
-        glVertex3f(-20.0f, -20.0f, -20.0f);
-        glVertex3f(-20.0f, 20.0f, -20.0f);
-        glVertex3f(20.0f, 20.0f, -20.0f);
-        //Left
-        glColor3f(20.0f, 0.0f, 20.0f);
-        glVertex3f(-20.0f, 20.0f, 20.0f);
-        glVertex3f(-20.0f, 20.0f, -20.0f);
-        glVertex3f(-20.0f, -20.0f, -20.0f);
-        glVertex3f(-20.0f, -20.0f, 20.0f);
-        //Right
-        glColor3f(20.0f, 20.0f, 20.0f);
-        glVertex3f(20.0f, 20.0f, -20.0f);
-        glVertex3f(20.0f, 20.0f, 20.0f);
-        glVertex3f(20.0f, -20.0f, 20.0f);
-        glVertex3f(20.0f, -20.0f, -20.0f);
-        glEnd();
+    
+    private void initLightArrays() 
+    {
+        lightPosition= BufferUtils.createFloatBuffer(4);
+        lightPosition.put(0.0f).put(0.0f).put(0.0f).put(1.0f).flip();
+        whiteLight= BufferUtils.createFloatBuffer(4);
+        whiteLight.put(1.0f).put(1.0f).put(1.0f).put(0.0f).flip();
     }
 
 }
