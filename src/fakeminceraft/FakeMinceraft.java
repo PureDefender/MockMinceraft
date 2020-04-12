@@ -18,8 +18,7 @@ import org.lwjgl.util.glu.GLU;
  * @author SydHo, Luke Doukakis
  */
 public class FakeMinceraft {
-    
-    
+
     DisplayMode displayMode;
     FirstPersonCameraController camera;
 
@@ -51,23 +50,25 @@ public class FakeMinceraft {
         }
         Display.setDisplayMode(displayMode);
         Display.setTitle("Fake Minecraft");
-        Display.create();  
+        Display.create();
     }
 
     void initGL() {
         glClearColor(.0f, .0f, .0f, .0f);
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        GLU.gluPerspective(100.0f, (float)displayMode.getWidth() / (float)displayMode.getHeight(), 0.1f, 300.0f);
+        GLU.gluPerspective(100.0f, (float) displayMode.getWidth() / (float) displayMode.getHeight(), 0.1f, 300.0f);
         glMatrixMode(GL_MODELVIEW);
         glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
         // -- allow chunks to be rendered
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_COLOR_ARRAY);
+        glEnable(GL_TEXTURE_2D);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         glEnable(GL_DEPTH_TEST);
         // --
     }
-    
+
     void gameLoop() {
         float dx = 0.0f;
         float dy = 0.0f;
@@ -79,10 +80,10 @@ public class FakeMinceraft {
         Mouse.setGrabbed(true);
         // repeat run until user desires to exit
         while (!Display.isCloseRequested() && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
-            
+
             time = Sys.getTime();
             lastTime = time;
-            
+
             // Apply orientation (pitch and yaw):
             camera.changeYaw(Mouse.getDX() * mouseSensitivity);
             camera.changePitch(Mouse.getDY() * mouseSensitivity);
@@ -93,16 +94,14 @@ public class FakeMinceraft {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             glLoadIdentity();
             camera.lookThrough();
-            
-            
+
             // -- call method to draw a box (from checkpoint 1)
             // drawScene();
             // --
-            
             // -- draw chunk
             camera.chunk.render();
             // --
-            
+
             Display.update();
             Display.sync(60);
         }
@@ -131,7 +130,6 @@ public class FakeMinceraft {
     }
 
     private void drawScene() {
-        
 
         glBegin(GL_QUADS);
         //Top
