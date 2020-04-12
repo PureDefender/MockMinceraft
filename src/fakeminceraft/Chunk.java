@@ -91,8 +91,7 @@ public class Chunk {
         while (persistance < PMIN) {
             persistance = PMAX * r.nextDouble();
         }
-        int seed = (int) (50 * r.nextFloat());
-        SimplexNoise noise = new SimplexNoise((int) CHUNK_SIZE, (double) persistance, (int) seed);
+        SimplexNoise noise = new SimplexNoise((int) CHUNK_SIZE, (double) persistance, r.nextInt());
 
         FloatBuffer VertexPositionData = BufferUtils.createFloatBuffer((CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) * 6 * 12);
         FloatBuffer VertexColorData = BufferUtils.createFloatBuffer((CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) * 6 * 12);
@@ -104,7 +103,7 @@ public class Chunk {
                 // Height randomized
                 int i = (int) (startX + x * ((300 - startX) / 640));
                 int j = (int) (startZ + z * ((300 - startZ) / 480));
-                height = 19 + Math.abs((startY + (int) (190 * noise.getNoise(i, j)) * CUBE_LENGTH / 2));
+                height = 15 + Math.abs((startY + (int) (130 * noise.getNoise(i, j)) * CUBE_LENGTH / 2));
                 persistance = 0;
                 for (float y = 0; y < height; y++) {
                     if (height >= CHUNK_SIZE) {
@@ -125,7 +124,7 @@ public class Chunk {
             for (float z = 0; z < CHUNK_SIZE; z++) {
                 for (float y = 0; y < CHUNK_SIZE; y++) {
                     if (BlocksArray[(int) (x)][(int) (y)][(int) (z)].active() && blockExposed((int) x, (int) y, (int) z)) {
-                        VertexPositionData.put(createCube((float) (startX + x * CUBE_LENGTH), (float) (y * CUBE_LENGTH + (float) (CHUNK_SIZE * -1.0)), (float) (startZ + z * CUBE_LENGTH) + (float) (CHUNK_SIZE * 1.5)));
+                        VertexPositionData.put(createCube((float) (startX + x * CUBE_LENGTH) + (float) (CHUNK_SIZE * -1.0), (float) (y * CUBE_LENGTH + (float) (CHUNK_SIZE * -1.0)), (float) (startZ + z * CUBE_LENGTH) - (float) (CHUNK_SIZE * 1.0)));
                         VertexColorData.put(createCubeVertexCol(getCubeColor(BlocksArray[(int) x][(int) y][(int) z])));
                         VertexTextureData.put(createTexCube((float) 0, (float) 0, BlocksArray[(int) (x)][(int) (y)][(int) (z)]));
                     }
@@ -202,24 +201,24 @@ public class Chunk {
                 return texCubeHelper(x, y, offset, 2, 1, 2, 1, 2, 1);
             case 5:
                 return texCubeHelper(x, y, offset, 2, 2, 2, 2, 2, 2);
-//            case 6:
-//                return texureBlock(x,y,offset,15,15,15,15,15,15);
-//            case 7:
-//                return texureBlock(x,y,offset,6,2,5,2,6,2);
-//            case 8:
-//                return texureBlock(x,y,offset,6,4,6,4,6,4);
-//            case 9:
-//                return texureBlock(x,y,offset,3,3,3,3,3,3);
-//            case 10:
-//                return texureBlock(x,y,offset,1,11,1,11,1,11);
-//            case 11:
-//                return texureBlock(x,y,offset,4,4,4,4,4,4);
-//            case 12:
-//                return texureBlock(x,y,offset,2,3,2,3,2,3);
-//            case 13:
-//                return texureBlock(x,y,offset,1,3,1,3,1,3);
-//            case 14:
-//                return texureBlock(x,y,offset,3,4,3,4,3,4);
+            case 6:
+                return texCubeHelper(x, y, offset, 15, 15, 15, 15, 15, 15);
+            case 7:
+                return texCubeHelper(x, y, offset, 6, 2, 5, 2, 6, 2);
+            case 8:
+                return texCubeHelper(x, y, offset, 6, 4, 6, 4, 6, 4);
+            case 9:
+                return texCubeHelper(x, y, offset, 3, 3, 3, 3, 3, 3);
+            case 10:
+                return texCubeHelper(x, y, offset, 1, 11, 1, 11, 1, 11);
+            case 11:
+                return texCubeHelper(x, y, offset, 4, 4, 4, 4, 4, 4);
+            case 12:
+                return texCubeHelper(x, y, offset, 2, 3, 2, 3, 2, 3);
+            case 13:
+                return texCubeHelper(x, y, offset, 1, 3, 1, 3, 1, 3);
+            case 14:
+                return texCubeHelper(x, y, offset, 3, 4, 3, 4, 3, 4);
             default:
                 System.out.println("not found");
                 return null;
@@ -288,6 +287,14 @@ public class Chunk {
         renderSandWater();
         renderBedrockLayer();
         renderBedrock();
+        renderLava();
+        renderCoal();
+        renderRedStone();
+        renderLapuz();
+        renderIronOre();
+        renderDiamondOre();
+        renderGoldOre();
+        renderTrees();
     }
 
     private void renderDirtLayer() {
@@ -327,7 +334,7 @@ public class Chunk {
         }
     }
 
-    public void renderSandWater() {
+    private void renderSandWater() {
         Vector3f start = startWater();
         int x = (int) start.x;
         int y = (int) start.y;
@@ -336,7 +343,7 @@ public class Chunk {
         makeSand(y);
     }
 
-    public void makeSand(int yStart) {
+    private void makeSand(int yStart) {
         for (int x = 0; x < CHUNK_SIZE; x++) {
             for (int z = 0; z < CHUNK_SIZE; z++) {
                 try {
@@ -397,7 +404,7 @@ public class Chunk {
         }
     }
 
-    public Vector3f startWater() {
+    private Vector3f startWater() {
         LinkedList<Vector3f> positions = new LinkedList<>();
         int minY = CHUNK_SIZE - 1;
         for (int x = 0; x < CHUNK_SIZE; x++) {
@@ -419,7 +426,7 @@ public class Chunk {
         return positions.get(rand);
     }
 
-    public void makeWater(int x, int y, int z) {
+    private void makeWater(int x, int y, int z) {
         if (x < 0 || y < 0 || z < 0 || x >= CHUNK_SIZE || y >= CHUNK_SIZE || z >= CHUNK_SIZE) {
             return;
         }
@@ -430,5 +437,305 @@ public class Chunk {
             makeWater(x, y, z + 1);
             makeWater(x, y, z - 1);
         }
+    }
+
+    private void renderLava() {
+        float persistance = 0;
+        while (persistance < PMIN) {
+            persistance = (PMAX) * r.nextFloat();
+        }
+        int seed = (int) (50 * r.nextFloat());
+        SimplexNoise noise = new SimplexNoise(CHUNK_SIZE, persistance, seed);
+        double temp = 0;
+        for (int x = 0; x < CHUNK_SIZE; x++) {
+            for (int z = 0; z < CHUNK_SIZE; z++) {
+                temp = noise.getNoise(x, z);
+                if (Math.abs(temp) < 0.02) {
+                    BlocksArray[x][6][z].setType(BlockLoader.BlockType.BlockType_Lava);
+                    BlocksArray[x][7][z].setActive(false);
+                }
+            }
+        }
+    }
+
+    private void renderCoal() {
+        for (int x = 0; x < CHUNK_SIZE; x++) {
+            for (int z = 0; z < CHUNK_SIZE; z++) {
+                for (int y = 1; y < 19; y++) {
+                    if (Math.random() < 0.015) {
+                        renderOreChunk(x, y, z, BlockLoader.BlockType.BlockType_Coal, 10);
+                    }
+                }
+            }
+        }
+    }
+
+    private void renderLapuz() {
+        for (int x = 0; x < CHUNK_SIZE; x++) {
+            for (int z = 0; z < CHUNK_SIZE; z++) {
+                for (int y = 1; y < 19; y++) {
+                    if (Math.random() < 0.008) {
+                        renderOreChunk(x, y, z, BlockLoader.BlockType.BlockType_Lapiz, 6);
+                    }
+                }
+            }
+        }
+    }
+
+    private void renderRedStone() {
+        for (int x = 0; x < CHUNK_SIZE; x++) {
+            for (int z = 0; z < CHUNK_SIZE; z++) {
+                for (int y = 1; y < 19; y++) {
+                    if (Math.random() < 0.01) {
+                        renderOreChunk(x, y, z, BlockLoader.BlockType.BlockType_Redstone, 6);
+                    }
+                }
+            }
+        }
+    }
+
+    private void renderIronOre() {
+        for (int x = 0; x < CHUNK_SIZE; x++) {
+            for (int z = 0; z < CHUNK_SIZE; z++) {
+                for (int y = 1; y < 19; y++) {
+                    if (Math.random() < 0.014) {
+                        renderOreChunk(x, y, z, BlockLoader.BlockType.BlockType_IronOre, 8);
+                    }
+                }
+            }
+        }
+    }
+
+    private void renderGoldOre() {
+        for (int x = 0; x < CHUNK_SIZE; x++) {
+            for (int z = 0; z < CHUNK_SIZE; z++) {
+                for (int y = 1; y < 15; y++) {
+                    if (Math.random() < 0.01) {
+                        renderOreChunk(x, y, z, BlockLoader.BlockType.BlockType_GoldOre, 6);
+                    }
+                }
+            }
+        }
+    }
+
+    private void renderDiamondOre() {
+        for (int x = 0; x < CHUNK_SIZE; x++) {
+            for (int z = 0; z < CHUNK_SIZE; z++) {
+                for (int y = 1; y < 7; y++) {
+                    if (Math.random() < 0.003) {
+                        renderOreChunk(x, y, z, BlockLoader.BlockType.BlockType_DiamondOre, 4);
+                    }
+                }
+            }
+        }
+    }
+
+    private void renderOreChunk(int x, int y, int z, BlockLoader.BlockType type, int numLeft) {
+        if (numLeft == 0 || x < 0 || y < 0 || z < 0 || x >= CHUNK_SIZE || y >= CHUNK_SIZE || z >= CHUNK_SIZE) {
+            return;
+        }
+        if (BlocksArray[x][y][z].getType() == BlockLoader.BlockType.BlockType_Stone) {
+            BlocksArray[x][y][z].setType(type);
+            double rand = Math.random();
+            if (rand < 1.0 / 6) {
+                renderOreChunk(x - 1, y, z, type, numLeft - 1);
+            } else if (rand < 2.0 / 6) {
+                renderOreChunk(x + 1, y, z, type, numLeft - 1);
+            } else if (rand < 3.0 / 6) {
+                renderOreChunk(x, y - 1, z, type, numLeft - 1);
+            } else if (rand < 4.0 / 6) {
+                renderOreChunk(x, y + 1, z, type, numLeft - 1);
+            } else if (rand < 5.0 / 6) {
+                renderOreChunk(x, y, z - 1, type, numLeft - 1);
+            } else {
+                renderOreChunk(x, y, z + 1, type, numLeft - 1);
+            }
+        }
+    }
+
+    public void renderTrees() {
+        LinkedList<Vector3f> positions = getTrees();
+        for (int i = 0; i < positions.size(); i++) {
+            renderTree((int) positions.get(i).x, (int) positions.get(i).y, (int) positions.get(i).z);
+        }
+    }
+
+    private void renderTree(int x, int y, int z) {
+        int randomHeight = (int) (Math.random() * 5 + 4);
+        for (int i = 1; i <= randomHeight; i++) {
+            place(x, y + i, z, BlockLoader.BlockType.BlockType_Wood);
+        }
+        int randomTreePatern = (int) (Math.random() * 3);
+        if (randomTreePatern == 0) {
+            place(x + 1, y + randomHeight, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 1, y + randomHeight, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight, z + 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight, z - 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 1, y + randomHeight, z + 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 1, y + randomHeight, z + 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 1, y + randomHeight, z - 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 1, y + randomHeight, z - 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 1, y + randomHeight + 1, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 1, y + randomHeight + 1, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight + 1, z + 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight + 1, z - 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 1, y + randomHeight - 1, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 1, y + randomHeight - 1, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight - 1, z + 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight - 1, z - 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 2, y + randomHeight, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 2, y + randomHeight, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight, z + 2, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight, z - 2, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight + 1, z, BlockLoader.BlockType.BlockType_Leaves);
+        } else if (randomTreePatern == 1) {
+            place(x + 1, y + randomHeight, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 1, y + randomHeight, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight, z + 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight, z - 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 1, y + randomHeight, z + 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 1, y + randomHeight, z + 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 1, y + randomHeight, z - 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 1, y + randomHeight, z - 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 1, y + randomHeight + 2, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 1, y + randomHeight + 2, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight + 2, z + 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight + 2, z - 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 1, y + randomHeight + 1, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 1, y + randomHeight + 1, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight + 1, z + 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight + 1, z - 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 1, y + randomHeight + 1, z + 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 1, y + randomHeight + 1, z + 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 1, y + randomHeight + 1, z - 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 1, y + randomHeight + 1, z - 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 1, y + randomHeight - 1, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 1, y + randomHeight - 1, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight - 1, z + 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight - 1, z - 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 2, y + randomHeight + 1, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 2, y + randomHeight + 1, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight + 1, z + 2, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight + 1, z - 2, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 2, y + randomHeight, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 2, y + randomHeight, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight, z + 2, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight, z - 2, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight + 1, z, BlockLoader.BlockType.BlockType_Leaves);
+        } else if (randomTreePatern == 2) {
+            place(x + 1, y + randomHeight, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 1, y + randomHeight, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight, z + 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight, z - 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 1, y + randomHeight, z + 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 1, y + randomHeight, z + 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 1, y + randomHeight, z - 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 1, y + randomHeight, z - 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 2, y + randomHeight, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 2, y + randomHeight, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 2, y + randomHeight, z - 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 2, y + randomHeight, z + 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 2, y + randomHeight, z + 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 2, y + randomHeight, z - 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight, z + 2, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight, z - 2, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 1, y + randomHeight, z + 2, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 1, y + randomHeight, z - 2, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 1, y + randomHeight, z + 2, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 1, y + randomHeight, z - 2, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 1, y + randomHeight + 2, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 1, y + randomHeight + 2, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight + 2, z + 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight + 2, z - 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 1, y + randomHeight + 2, z + 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 1, y + randomHeight + 2, z + 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 1, y + randomHeight + 2, z - 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 1, y + randomHeight + 2, z - 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 1, y + randomHeight + 3, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 1, y + randomHeight + 3, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight + 3, z + 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight + 3, z - 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight + 3, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 1, y + randomHeight + 1, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 1, y + randomHeight + 1, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight + 1, z + 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight + 1, z - 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 1, y + randomHeight + 1, z + 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 1, y + randomHeight + 1, z + 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 1, y + randomHeight + 1, z - 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 1, y + randomHeight + 1, z - 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 2, y + randomHeight + 1, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 2, y + randomHeight + 1, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 2, y + randomHeight + 1, z - 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 2, y + randomHeight + 1, z + 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 2, y + randomHeight + 1, z + 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 2, y + randomHeight + 1, z - 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight + 1, z + 2, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight + 1, z - 2, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 1, y + randomHeight + 1, z + 2, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 1, y + randomHeight + 1, z - 2, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 1, y + randomHeight + 1, z + 2, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 1, y + randomHeight + 1, z - 2, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 1, y + randomHeight - 1, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 1, y + randomHeight - 1, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight - 1, z + 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight - 1, z - 1, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 2, y + randomHeight + 2, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 2, y + randomHeight + 2, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight + 2, z + 2, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight + 2, z - 2, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 2, y + randomHeight + 1, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 2, y + randomHeight + 1, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight + 1, z + 2, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight + 1, z - 2, BlockLoader.BlockType.BlockType_Leaves);
+            place(x + 2, y + randomHeight, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x - 2, y + randomHeight, z, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight, z + 2, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight, z - 2, BlockLoader.BlockType.BlockType_Leaves);
+            place(x, y + randomHeight + 1, z, BlockLoader.BlockType.BlockType_Leaves);
+        }
+    }
+
+    private void place(int x, int y, int z, BlockLoader.BlockType type) {
+        try {
+            BlocksArray[x][y][z].setActive(true);
+            BlocksArray[x][y][z].setType(type);
+        } catch (IndexOutOfBoundsException e) {
+        }
+    }
+
+    private LinkedList<Vector3f> getTrees() {
+        LinkedList<Vector3f> p = new LinkedList<>();
+        int numAttempts = (int) (3 + (Math.random() * 30));
+        for (int i = 0; i < numAttempts; i++) {
+            int x = (int) (Math.random() * CHUNK_SIZE);
+            int z = (int) (Math.random() * CHUNK_SIZE);
+            int y = getYMax(x, z);
+            if (BlocksArray[x][y][z].getType() == BlockLoader.BlockType.BlockType_Grass && checkDistance(x, z, p)) {
+                p.add(new Vector3f(x, y, z));
+            }
+
+        }
+        return p;
+    }
+
+    private boolean checkDistance(int x, int z, LinkedList<Vector3f> positions) {
+        for (int i = 0; i < positions.size(); i++) {
+            if (x < positions.get(i).x + 2 && x > positions.get(i).x - 2) {
+                return false;
+            }
+            if (z < positions.get(i).z + 2 && z > positions.get(i).z - 2) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private int getYMax(int x, int z) {
+        int y = 0;
+        while (y < CHUNK_SIZE - 1 && BlocksArray[x][y][z].active()) {
+            y++;
+        }
+        return y - 1;
     }
 }

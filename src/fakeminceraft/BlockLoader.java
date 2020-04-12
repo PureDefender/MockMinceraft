@@ -25,17 +25,17 @@ public class BlockLoader {
         BlockType_Water(2),
         BlockType_Dirt(3),
         BlockType_Stone(4),
-        BlockType_Bedrock(5);
-//        BlockType_Lava(6),
-//        BlockType_Wood(7),
-//        BlockType_Leaves(8),
-//        BlockType_Coal(9),
-//        BlockType_Lapiz(10),
-//        BlockType_Redstone(11),
-//        BlockType_IronOre(12),
-//        BlockType_GoldOre(13),
-//        BlockType_DiamondOre(14),
-//        BlockType_Default(15);
+        BlockType_Bedrock(5),
+        BlockType_Lava(6),
+        BlockType_Wood(7),
+        BlockType_Leaves(8),
+        BlockType_Coal(9),
+        BlockType_Lapiz(10),
+        BlockType_Redstone(11),
+        BlockType_IronOre(12),
+        BlockType_GoldOre(13),
+        BlockType_DiamondOre(14),
+        BlockType_Default(15);
 
         private int blockID;
 
