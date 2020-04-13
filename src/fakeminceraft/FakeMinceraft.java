@@ -25,6 +25,7 @@ public class FakeMinceraft {
     FirstPersonCameraController camera;
     private FloatBuffer lightPosition;
     private FloatBuffer whiteLight;
+    float movementSpeed = .35f;
 
     public static void main(String[] args) {
         FakeMinceraft main = new FakeMinceraft();
@@ -64,15 +65,15 @@ public class FakeMinceraft {
         GLU.gluPerspective(100.0f, (float) displayMode.getWidth() / (float) displayMode.getHeight(), 0.1f, 300.0f);
         glMatrixMode(GL_MODELVIEW);
         glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-        
+
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_COLOR_ARRAY);
         glEnable(GL_TEXTURE_2D);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         glEnable(GL_DEPTH_TEST);
-        
+
         initLightArrays();
-        glLight(GL_LIGHT0, GL_POSITION, lightPosition); 
+        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
         glLight(GL_LIGHT0, GL_SPECULAR, whiteLight);
         glLight(GL_LIGHT0, GL_DIFFUSE, whiteLight);
         glLight(GL_LIGHT0, GL_AMBIENT, whiteLight);
@@ -87,7 +88,6 @@ public class FakeMinceraft {
         float lastTime = 0.0f;  // when the last frame was
         long time = 0;
         float mouseSensitivity = 0.09f;
-        float movementSpeed = .35f;
         Mouse.setGrabbed(true);
         // repeat run until user desires to exit
         while (!Display.isCloseRequested() && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
@@ -99,7 +99,7 @@ public class FakeMinceraft {
             camera.changeYaw(Mouse.getDX() * mouseSensitivity);
             camera.changePitch(Mouse.getDY() * mouseSensitivity);
 
-            checkInput(camera, movementSpeed);
+            checkInput(camera);
 
             // Show scene:
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -119,7 +119,7 @@ public class FakeMinceraft {
         Display.destroy();
     }
 
-    private void checkInput(FirstPersonCameraController camera, float movementSpeed) {
+    private void checkInput(FirstPersonCameraController camera) {
         if (Keyboard.isKeyDown(Keyboard.KEY_W) || Keyboard.isKeyDown(Keyboard.KEY_UP)) {
             camera.moveForward(movementSpeed);
         }
@@ -138,13 +138,27 @@ public class FakeMinceraft {
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
             camera.moveDown(movementSpeed);
         }
+        // Increase movement speed of the camera
+        if (Keyboard.isKeyDown(Keyboard.KEY_E)) {
+            movementSpeed += .1f;
+        }
+        // Decrease movement speed of the camera
+        if (Keyboard.isKeyDown(Keyboard.KEY_Q)) {
+            movementSpeed -= .1f;
+        }
+        // Reset movement speed of the camera
+        if (Keyboard.isKeyDown(Keyboard.KEY_R)) {
+            movementSpeed = .35f;
+        }
+        if (movementSpeed <= 0) {
+            movementSpeed = .05f;
+        }
     }
-    
-    private void initLightArrays() 
-    {
-        lightPosition= BufferUtils.createFloatBuffer(4);
+
+    private void initLightArrays() {
+        lightPosition = BufferUtils.createFloatBuffer(4);
         lightPosition.put(0.0f).put(0.0f).put(0.0f).put(1.0f).flip();
-        whiteLight= BufferUtils.createFloatBuffer(4);
+        whiteLight = BufferUtils.createFloatBuffer(4);
         whiteLight.put(1.0f).put(1.0f).put(1.0f).put(0.0f).flip();
     }
 
