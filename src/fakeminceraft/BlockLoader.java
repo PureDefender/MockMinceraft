@@ -30,7 +30,7 @@ public class BlockLoader {
         BlockType_Wood(7),
         BlockType_Leaves(8),
         BlockType_Coal(9),
-        BlockType_Lapiz(10),
+        BlockType_Lapis(10),
         BlockType_Redstone(11),
         BlockType_IronOre(12),
         BlockType_GoldOre(13),
