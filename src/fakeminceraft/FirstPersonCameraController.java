@@ -2,7 +2,9 @@ package fakeminceraft;
 
 /**
  *
- * @author Luke
+ * @author Luke, Sydney
+ * 
+ * Purpose: Camera controlled by the user
  */
 import java.nio.FloatBuffer;
 import org.lwjgl.BufferUtils;

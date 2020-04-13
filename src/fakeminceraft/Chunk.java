@@ -4,10 +4,12 @@ package fakeminceraft;
  *
  * File: Chunk.java
  *
- * @author Luke Class: CS 4450-01 - Computer Graphics Assignment: Final Program
- * Date Last Modified:
+ * @author Luke, Sydney
+ * Class: CS 4450-01 - Computer Graphics 
+ * Assignment: Final Program
+ * Date Last Modified: 4/13/2020
  *
- * Purpose:
+ * Purpose: Renders the chunk
  */
 import java.nio.FloatBuffer;
 import java.util.LinkedList;
