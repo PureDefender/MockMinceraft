@@ -9,11 +9,7 @@ package fakeminceraft;
 import java.nio.FloatBuffer;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.util.vector.Vector3f;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.Display;
 import static org.lwjgl.opengl.GL11.*;
-import org.lwjgl.Sys;
 
 public class FirstPersonCameraController {
 
@@ -46,12 +42,20 @@ public class FirstPersonCameraController {
     public void changeYaw(float amount) {
         //increment the yaw by the amount param
         yaw += amount;
+        
+        FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
+        lightPosition.put(lPosition.x).put(lPosition.y).put(lPosition.z).put(1.0f).flip();
+        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
     }
 
     //increment the camera's current pitch rotation
     public void changePitch(float amount) {
         //increment the pitch by the amount param
         pitch -= amount;
+        
+        FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
+        lightPosition.put(lPosition.x).put(lPosition.y).put(lPosition.z).put(1.0f).flip();
+        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
     }
 
     //moves the camera forward relative to its current rotation (yaw)

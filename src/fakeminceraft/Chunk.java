@@ -22,18 +22,18 @@ import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
-public class Chunk {
+public final class Chunk {
 
     static final int CHUNK_SIZE = 50;
     static final int CUBE_LENGTH = 2;
     static final float PMIN = 0.04f;
     static final float PMAX = 0.06f;
-    private BlockLoader[][][] BlocksArray;
+    private final BlockLoader[][][] BlocksArray;
     private int VBOVertexHandle;
     private int VBOColorHandle;
     private int VBOTextureHandle;
     private Texture texture;
-    private Random r;
+    private final Random r;
 
     /**
      * Constructor for Chunk object

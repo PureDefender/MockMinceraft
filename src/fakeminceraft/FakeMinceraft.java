@@ -47,9 +47,9 @@ public class FakeMinceraft {
 
     void createWindow() throws Exception {
         DisplayMode d[] = Display.getAvailableDisplayModes();
-        for (int i = 0; i < d.length; i++) {
-            if (d[i].getWidth() == 640 && d[i].getHeight() == 480 && d[i].getBitsPerPixel() == 32) {
-                displayMode = d[i];
+        for (DisplayMode d1 : d) {
+            if (d1.getWidth() == 640 && d1.getHeight() == 480 && d1.getBitsPerPixel() == 32) {
+                displayMode = d1;
                 break;
             }
         }
@@ -86,7 +86,7 @@ public class FakeMinceraft {
         float dy = 0.0f;
         float dt = 0.0f;        //length of frame
         float lastTime = 0.0f;  // when the last frame was
-        long time = 0;
+        long time;
         float mouseSensitivity = 0.09f;
         Mouse.setGrabbed(true);
         // repeat run until user desires to exit
